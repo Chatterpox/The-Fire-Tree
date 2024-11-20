@@ -6,15 +6,19 @@ addLayer("e", {
         unlocked: true,
 		points: new Decimal(0),
     }},
-    color: "#4BDC13",
+    color: "#e09112",
     requires: new Decimal(10), // Can be a function that takes requirement increases into account
     resource: "embers", // Name of prestige currency
     baseResource: "sparks", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
-    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+
+        if(hasUpgrade(this.layer,23)) mult = mult.div(upgradeEffect('e', 23))
+        if(hasUpgrade(this.layer,33)) mult = mult.div(upgradeEffect('e', 33))
+
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -24,5 +28,82 @@ addLayer("e", {
     hotkeys: [
         {key: "e", description: "E: Reset for embers", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
+    upgrades: {
+        11: {
+            title: "A single match.",
+            description: "Double spark gain.",
+            cost: new Decimal(1),
+        },
+        12: {
+            title: "A smoldering cigarette.",
+            description: "Triple spark gain.",
+            cost: new Decimal(2),
+        },
+        13: {
+            title: "A small campfire.",
+            description: "Quadruple spark gain.",
+            cost: new Decimal(5),
+        },
+        21: {
+            title: "An open candle.",
+            description: "Multiply spark gain based on embers.",
+            cost: new Decimal(10),
+            unlocked() { return hasUpgrade('e',13)},
+            effect() {
+                return player[this.layer].points.add(1).pow(0.2)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+        },
+        22: {
+            title: "A dropped lighter.",
+            description: "Multiply spark gain based on sparks.",
+            cost: new Decimal(15),
+            unlocked() { return hasUpgrade('e',13)},
+            effect() {
+                return player.points.add(1).pow(0.1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+        },
+        23: {
+            title: "A firework gone askew.",
+            description: "Divide ember requirements based on sparks.",
+            cost: new Decimal(20),
+            unlocked() { return hasUpgrade('e',13)},
+            effect() {
+                return player.points.add(1).pow(0.1)
+            },
+            effectDisplay() { return "/" + format(upgradeEffect(this.layer, this.id)) },
+        },
+        31: {
+            title: "Lightning strike on a dry tree.",
+            description: "A stronger version of 'An open candle.'",
+            cost: new Decimal(25),
+            unlocked() { return hasUpgrade('e',23)},
+            effect() {
+                return player[this.layer].points.add(1).pow(0.5)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+        },
+        32: {
+            title: "Like an ant under a magnifying glass.",
+            description: "A stronger version of 'A dropped lighter.'",
+            cost: new Decimal(50),
+            unlocked() { return hasUpgrade('e',23)},
+            effect() {
+                return player.points.add(1).pow(0.3)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+        },
+        33: {
+            title: "A young arsonist.",
+            description: "A stronger version of 'A firework gone askew.'",
+            cost: new Decimal(100),
+            unlocked() { return hasUpgrade('e',23)},
+            effect() {
+                return player.points.add(1).pow(0.2)
+            },
+            effectDisplay() { return "/" + format(upgradeEffect(this.layer, this.id)) },
+        },
+    },
     layerShown(){return true}
 })
