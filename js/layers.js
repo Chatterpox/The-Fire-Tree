@@ -1,5 +1,5 @@
 addLayer("e", {
-    name: "embers", // This is optional, only used in a few places, If absent it just uses the layer id.
+    name: "Embers", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "E", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
@@ -8,8 +8,8 @@ addLayer("e", {
     }},
     color: "#e09112",
     requires: new Decimal(10), // Can be a function that takes requirement increases into account
-    resource: "embers", // Name of prestige currency
-    baseResource: "sparks", // Name of resource prestige is based on
+    resource: "Embers", // Name of prestige currency
+    baseResource: "Sparks", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.5, // Prestige currency exponent
@@ -31,22 +31,22 @@ addLayer("e", {
     upgrades: {
         11: {
             title: "A single match.",
-            description: "Double spark gain.",
+            description: "Double Spark gain.",
             cost: new Decimal(1),
         },
         12: {
             title: "A smoldering cigarette.",
-            description: "Triple spark gain.",
+            description: "Triple Spark gain.",
             cost: new Decimal(2),
         },
         13: {
             title: "A small campfire.",
-            description: "Quadruple spark gain.",
+            description: "Quadruple Spark gain.",
             cost: new Decimal(5),
         },
         21: {
             title: "An open candle.",
-            description: "Multiply spark gain based on embers.",
+            description: "Multiply Spark gain based on Embers.",
             cost: new Decimal(10),
             unlocked() { return hasUpgrade('e',13)},
             effect() {
@@ -56,7 +56,7 @@ addLayer("e", {
         },
         22: {
             title: "A dropped lighter.",
-            description: "Multiply spark gain based on sparks.",
+            description: "Multiply Spark gain based on Sparks.",
             cost: new Decimal(15),
             unlocked() { return hasUpgrade('e',13)},
             effect() {
@@ -66,7 +66,7 @@ addLayer("e", {
         },
         23: {
             title: "A firework gone askew.",
-            description: "Divide ember requirements based on sparks.",
+            description: "Divide Ember requirements based on Sparks.",
             cost: new Decimal(20),
             unlocked() { return hasUpgrade('e',13)},
             effect() {
@@ -76,7 +76,7 @@ addLayer("e", {
         },
         31: {
             title: "Lightning strike on a dry tree.",
-            description: "A stronger version of 'An open candle.'",
+            description: "A stronger version of 'An open candle.'.",
             cost: new Decimal(25),
             unlocked() { return hasUpgrade('e',23)},
             effect() {
@@ -86,7 +86,7 @@ addLayer("e", {
         },
         32: {
             title: "Like an ant under a magnifying glass.",
-            description: "A stronger version of 'A dropped lighter.'",
+            description: "A stronger version of 'A dropped lighter.'.",
             cost: new Decimal(50),
             unlocked() { return hasUpgrade('e',23)},
             effect() {
@@ -96,13 +96,26 @@ addLayer("e", {
         },
         33: {
             title: "A young arsonist.",
-            description: "A stronger version of 'A firework gone askew.'",
+            description: "A stronger version of 'A firework gone askew.'.",
             cost: new Decimal(100),
             unlocked() { return hasUpgrade('e',23)},
             effect() {
                 return player.points.add(1).pow(0.2)
             },
             effectDisplay() { return "/" + format(upgradeEffect(this.layer, this.id)) },
+        },
+        41: {
+            title: "They begin to spread.",
+            description: "Unlock the Flames layer and Ember Milestones.",
+            cost: new Decimal(150),
+        },
+    },
+    milestones: {
+        0: {
+            requirementDescription: "500 Embers",
+            effectDescription: "They are left untreated. Gain a massive multiplier to spark gain based on Embers.",
+            done() { return player.e.points.gte(500) },
+            unlocked() { return hasUpgrade(this.layer,41) },
         },
     },
     layerShown(){return true}
